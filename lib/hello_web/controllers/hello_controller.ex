@@ -1,6 +1,8 @@
 defmodule HelloWeb.HelloController do
   use HelloWeb, :controller
 
+  plug(HelloWeb.Plugs.Locale, "en" when action in [:index])
+
   # The purpose of action is to gather data and perform the rendering.
   def index(conn, _params) do
     # It tells Phoenix to render the "index" template.
