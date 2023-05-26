@@ -11,6 +11,10 @@ defmodule HelloWeb.HelloController do
   end
 
   def show(conn, %{"messenger" => messenger} = _params) do
-    render(conn, :show, messenger: messenger)
+    conn
+    |> assign(:messenger, messenger)
+    |> render(:show)
+
+    # render(conn, :show, messenger: messenger)
   end
 end

@@ -95,7 +95,47 @@ request
 
 - Use `forward` to [forward]https://hexdocs.pm/phoenix/routing.html#forward() all request with a prefix path to a plug.
 
+## Controllers 
+- A intermediary modules act between route and view. It is also a plug by itself.
+- Controller functions (actions) [naming convension](https://hexdocs.pm/phoenix/controllers.html#actions).
+  - Each function always has signature: `(conn, params)`
+
+- There are several ways for controller to render content 
+  - `text/2` 
+  - `json/2`, useful for writing APIs.
+  - `html/2`
+  - `render/3`
+    - Controller and view must share the same root name (in our case, it is `Hello`).
+    - Use functional component or embed_templates. 
+    - By default the controller, view module, and templates are collocated together in the same controller directory.
+- We could make a controller to support render both html and json by specifying which views to use for each format.
+  - In controller, explicitly set the following:
+    ```elixir 
+    plug :put_view, html: HelloWeb.PageHTML, json: HelloWeb.PageJSON
+    ```
+  - Create view module `HelloWeb.PageJSON` and return json object from template.
+  - Edit router to be: `plug :accepts, ["html", "json"]`.
+
+- Setting the content type
+  ```elixir 
+  conn
+  |> put_resp_content_type("text/xml")
+  |> render(:home, content: some_xml_content)
+  ```
+  
+- Setting the HTTP Status
+  ```elixir 
+  conn
+  |> put_status(202)
+  |> render(:home, layout: false)
+  ```
+
+### Redirection
+- Redirect within application using `~p` sigil.
+- Redirect outside URL with full-quanlified path.
+
 # Troubleshooting
 - How to prevent vscode automatically add parenthese?
   This is especially annoying for some code, such as Plug related.
   - Solution: seems [no simple solution](https://github.com/elixir-lang/elixir/issues/8165).
+
