@@ -138,6 +138,10 @@ request
 - What is function component ?
   Any function that accepts an assigns parameter and returns a HEEx template to be a function component.
 
+## Ecto 
+- Create schema by using `mix ecto.gen.migration <migration_name>`.
+  - This will create a migration file and let us to edit it to fill it with any schema definition.
+  - We could also [define schema](https://hexdocs.pm/phoenix/ecto.html#using-the-schema-and-migration-generator) directly by using `mix phx.gen.schema`
 
 # Troubleshooting
 - How to prevent vscode automatically add parenthese?
