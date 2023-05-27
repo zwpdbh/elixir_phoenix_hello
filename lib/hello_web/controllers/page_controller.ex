@@ -11,6 +11,8 @@ defmodule HelloWeb.PageController do
   end
 
   def redirect_test(conn, _params) do
-    render(conn, :home, layout: false)
+    conn
+    |> put_layout(html: :admin)
+    |> render(:home)
   end
 end

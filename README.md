@@ -134,6 +134,11 @@ request
 - Redirect within application using `~p` sigil.
 - Redirect outside URL with full-quanlified path.
 
+## Components and HEEX
+- What is function component ?
+  Any function that accepts an assigns parameter and returns a HEEx template to be a function component.
+
+
 # Troubleshooting
 - How to prevent vscode automatically add parenthese?
   This is especially annoying for some code, such as Plug related.

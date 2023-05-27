@@ -16,10 +16,13 @@ defmodule HelloWeb.HelloHTML do
   # We will create file "hello_html/index.html.heex".
   embed_templates("hello_html/*")
 
-  # Here, we use functional component
-  def show(assigns) do
+  attr :messenger, :string, default: nil
+
+  # Here, we create a function component.
+  # It could be embedded from tempalte file.
+  def greet(assigns) do
     ~H"""
-      <h2>Hello World, from <%= assigns.messenger %>!</h2>
+    <h2>Hello World, from <%= @messenger %>!</h2>
     """
   end
 end
