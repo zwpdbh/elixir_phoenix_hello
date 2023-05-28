@@ -184,8 +184,9 @@ request
       - Do schema stuff: context <> schema.
     - In other words, from controller's point of view, how product fetching and creation is happening under the hood. 
 
-- Example: [Add new functions into Catelog](https://hexdocs.pm/phoenix/contexts.html#adding-catalog-functions)
-  - 
+- Example: Add new functions into context.
+  - Suppose we want to [tracking product page view count](https://hexdocs.pm/phoenix/contexts.html#adding-catalog-functions). 
+  - Be careful the race condition. 
 
 
 # Troubleshooting
