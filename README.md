@@ -146,6 +146,48 @@ request
 - `Repo` take care of the finer details of persistence and data querying for us.
   - We pass a changeset to `Repo.insert/2` to insert.
   - We cound also  insert data model directly.
+
+## Contexts 
+- What are contexts ? [Thinking about design](https://hexdocs.pm/phoenix/contexts.html#thinking-about-design)
+  - Contexts are dedicated modules that expose and group related functionality.
+  - In Phoenix, contexts often encapsulate data access and data validation.
+- How to come up a name for context? 
+  - If you're stuck when trying to come up with a context name when the grouped functionality in your system isn't yet clear, you can simply use the plural form of the resource you're creating.
+  - For example, a Products context for managing products. As you grow your application and the parts of your system become clear, you can simply rename the context to a more refined one.
+
+- Helper functions 
+  - `mix phx.gen.html`
+  - `mix phx.gen.json`
+  - `mix phx.gen.live`
+  - `mix phx.gen.context`
+
+- Example: Create A context for showcasing a product and managing the exhibition of products.
+  - Generate context `Catalog`
+    ```elixir 
+    mix phx.gen.html Catalog Product products title:string description:string price:decimal views:integer
+    ```
+    It generates 4 parts
+    - Context module `Hello.Catalog` in `lib/hello/catalog.ex`.
+    - Schema module `Hello.Catalog.Product` in `lib/hello/catalog/product.ex`.
+    - Web controller and views for `product`: 
+      - `HelloWeb.ProductController`, controller module in `lib/hello_web/controllers/product_controller.ex`.
+      - `HelloWeb.ProductHTML`, view module in `lib/hello_web/controllers/product_html.ex`.
+      - Several template files such as`xxx.heex.html` in folder `lib/hello_web/controllers/product_html`.
+    - Test related files. 
+  - Run `mix ecto.migrate`.
+  - Edit `lib/hello_web/router.ex to` to include `resources "/products", ProductController`.
+
+- What have learned from above example: 
+  - Our Phoenix controller is the web interface into our greater application. Our business logic and storage details are decoupled by context.
+    - Therefore, the controller talks to`Catelog` context module instead of `Product` schema module. 
+      - Do business stuff: controller <> context 
+      - Do schema stuff: context <> schema.
+    - In other words, from controller's point of view, how product fetching and creation is happening under the hood. 
+
+- Example: [Add new functions into Catelog](https://hexdocs.pm/phoenix/contexts.html#adding-catalog-functions)
+  - 
+
+
 # Troubleshooting
 - How to prevent vscode automatically add parenthese?
   This is especially annoying for some code, such as Plug related.
