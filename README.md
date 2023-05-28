@@ -142,7 +142,10 @@ request
 - Create schema by using `mix ecto.gen.migration <migration_name>`.
   - This will create a migration file and let us to edit it to fill it with any schema definition.
   - We could also [define schema](https://hexdocs.pm/phoenix/ecto.html#using-the-schema-and-migration-generator) directly by using `mix phx.gen.schema`
-
+- `Changeset` define a pipeline of transformations our data needs to undergo before it will be ready for our application to use.
+- `Repo` take care of the finer details of persistence and data querying for us.
+  - We pass a changeset to `Repo.insert/2` to insert.
+  - We cound also  insert data model directly.
 # Troubleshooting
 - How to prevent vscode automatically add parenthese?
   This is especially annoying for some code, such as Plug related.
