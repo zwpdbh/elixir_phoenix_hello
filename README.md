@@ -161,6 +161,8 @@ request
   - `mix phx.gen.live`
   - `mix phx.gen.context`
 
+  The differences between `mix phx.gen.context` vs `mix phx.gen.html` is that: `mix phx.gen.context` won't generate web related files for us. 
+
 - Example: Create A context for showcasing a product and managing the exhibition of products.
   - Generate context `Catalog`
     ```elixir 
@@ -180,14 +182,50 @@ request
 - What have learned from above example: 
   - Our Phoenix controller is the web interface into our greater application. Our business logic and storage details are decoupled by context.
     - Therefore, the controller talks to`Catelog` context module instead of `Product` schema module. 
-      - Do business stuff: controller <> context 
+      - Visit to product in Router <> actions in controller. 
+      - Do business stuff: controller <> context. 
       - Do schema stuff: context <> schema.
     - In other words, from controller's point of view, how product fetching and creation is happening under the hood. 
 
 - Example: Add new functions into context.
   - Suppose we want to [tracking product page view count](https://hexdocs.pm/phoenix/contexts.html#adding-catalog-functions). 
-  - Be careful the race condition. 
+  - Think of a function that describes what we want to accomplish and be careful the race condition. 
 
+
+
+### [In-context Relationships](https://hexdocs.pm/phoenix/contexts.html#in-context-relationships) 
+- How to determine if two resources belong to the same context or not?  
+  In general, if you are unsure, you should prefer separate modules (contexts).
+- How to add a many to many relationship to an existing resource ? 
+  For example, a product can have multiple categories, and a category can contain multiple products. 
+  - Create `Category` by: `mix phx.gen.context Catalog Category categories`.
+  - Create relationship table by: `mix ecto.gen.migration create_product_categories`.
+    - Define table with foreign_key, index and unique_index.
+  - Fill sample data using `priv/repo/seeds.exs`.
+  - Modify existing `lib/hello/catalog/product.ex` schema to add many_to_many relationship to categories.
+  - Modify existing `lib/hello/catalog.ex` context. 
+    - Modify product to repload categories.
+    - When change product
+      - When fetch product, also load categories from category_ids.
+      - For change a product: Preload categories and do changeset, then put_assoc
+        ```elixir 
+        def change_product(%Product{} = product, attrs \\ %{}) do
+          # Product.changeset(product, attrs)
+          categories = list_categories_by_id(attrs["category_ids"])
+
+          product
+          |> Repo.preload(:categories)
+          |> Product.changeset(attrs)
+          |> Ecto.Changeset.put_assoc(:categories, categories)
+        end
+        ```
+  - Adding the category input to the product form.
+    - Create new function component `lib/hello_web/controllers/product_html.ex`.
+    - Use function component in `lib/hello_web/controllers/product_html/product_form.html.heex` for selecting categories in product form.
+    - Modify `lib/hello_web/controllers/product_html/show.html.heex` to show categories for a product.
+
+### [Cross-context dependencies](https://hexdocs.pm/phoenix/contexts.html#cross-context-dependencies) 
+In this part, we build the "carting products from the catalog" feature.
 
 # Troubleshooting
 - How to prevent vscode automatically add parenthese?
