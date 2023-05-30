@@ -227,7 +227,34 @@ request
 ### [Cross-context dependencies](https://hexdocs.pm/phoenix/contexts.html#cross-context-dependencies) 
 In order to properly track products that have been added to a user's cart, we build the "carting products from the catalog" feature.
 
-- A new context: ShoppingCart.
+- Generate `Cart` in  `ShoppingCart` context 
+  ```sh 
+  mix phx.gen.context ShoppingCart Cart carts user_uuid:uuid:unique
+  ```
+
+- Generate `CartItem` in `ShoppingCart` context. 
+  ```sh 
+  mix phx.gen.context ShoppingCart CartItem cart_items \
+  cart_id:references:carts product_id:references:products \
+  price_when_carted:decimal quantity:integer
+  ```
+- Do further modification to the generated migration file `create_cart_items.exs` to enhance:
+  - price precision and scale
+  - foreign_key's on_delete operation 
+  - create unique index from two index's combination
+
+- Run `mix ecto.migrate`.
+
+- Do cross-context data 
+  - Setup association for schemas which has dependencies for each other. In our case, `ShoppingCart` context have a data dependency on the `Catalog` context. 
+    - One solution is to use database joins to fetch the dependent data. (Our choice).
+    - Another one is to expose APIs on the `Catalog` context to allow us to fetch product data for use in the `ShoppingCart` system.
+  - Notice `has_many` vs `belong_to`
+    - `Cart` has many `CartItem`.
+    - `CartItem` belong to `Cart`, 
+    - `CartItem` belong to `Product`
+
+- Adding Shopping Cart functions
 
 # Troubleshooting
 - How to prevent vscode automatically add parenthese?
