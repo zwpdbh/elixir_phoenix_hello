@@ -225,7 +225,9 @@ request
     - Modify `lib/hello_web/controllers/product_html/show.html.heex` to show categories for a product.
 
 ### [Cross-context dependencies](https://hexdocs.pm/phoenix/contexts.html#cross-context-dependencies) 
-In this part, we build the "carting products from the catalog" feature.
+In order to properly track products that have been added to a user's cart, we build the "carting products from the catalog" feature.
+
+- A new context: ShoppingCart.
 
 # Troubleshooting
 - How to prevent vscode automatically add parenthese?
