@@ -257,6 +257,11 @@ In order to properly track products that have been added to a user's cart, we bu
 - Adding Shopping Cart functions
   See: https://hexdocs.pm/phoenix/contexts.html#adding-shopping-cart-functions
 
+
+# Other references
+## About Ecto
+- [Understanding Associations in Elixir's Ecto](https://blog.appsignal.com/2020/11/10/understanding-associations-in-elixir-ecto.html)
+
 # Troubleshooting
 - How to prevent vscode automatically add parenthese?
   This is especially annoying for some code, such as Plug related.
