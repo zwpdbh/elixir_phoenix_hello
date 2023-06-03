@@ -255,7 +255,7 @@ In order to properly track products that have been added to a user's cart, we bu
     - `CartItem` belong to `Product`
 
 - Adding Shopping Cart functions
-  See: https://hexdocs.pm/phoenix/contexts.html#adding-shopping-cart-functions
+  See: [Adding Shopping Cart functions](https://hexdocs.pm/phoenix/contexts.html#adding-shopping-cart-functions)
 
 
 # Other references
