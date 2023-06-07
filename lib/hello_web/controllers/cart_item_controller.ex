@@ -4,7 +4,7 @@ defmodule HelloWeb.CartItemController do
   alias Hello.ShoppingCart
 
   def create(conn, %{"product_id" => product_id}) do
-    case ShoppingCart.add_item_to_cart(conn.assign.cart, product_id) do
+    case ShoppingCart.add_item_to_cart(conn.assigns.cart, product_id) do
       {:ok, _item} ->
         conn
         |> put_flash(:info, "Item added to your cart")
@@ -18,7 +18,7 @@ defmodule HelloWeb.CartItemController do
   end
 
   def delete(conn, %{"product_id" => product_id}) do
-    {:ok, _cart} = ShoppingCart.remove_item_from_cart(conn.assign.cart, product_id)
+    {:ok, _cart} = ShoppingCart.remove_item_from_cart(conn.assigns.cart, product_id)
     redirect(conn, to: ~p"/cart")
   end
 end

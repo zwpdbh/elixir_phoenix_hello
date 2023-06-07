@@ -21,7 +21,7 @@ defmodule HelloWeb.Router do
       new_uuid = Ecto.UUID.generate()
 
       conn
-      |> assign(:currnt_uuid, new_uuid)
+      |> assign(:current_uuid, new_uuid)
       |> put_session(:current_uuid, new_uuid)
     end
   end
@@ -29,7 +29,7 @@ defmodule HelloWeb.Router do
   alias Hello.ShoppingCart
 
   defp fetch_current_cart(conn, _opt) do
-    if cart = ShoppingCart.get_cart_by_user_uuid(conn.assign.current_uuid) do
+    if cart = ShoppingCart.get_cart_by_user_uuid(conn.assigns.current_uuid) do
       assign(conn, :cart, cart)
     else
       {:ok, new_cart} = ShoppingCart.create_cart(conn.assigns.current_uuid)
