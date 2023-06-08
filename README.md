@@ -225,6 +225,8 @@ request
     - Modify `lib/hello_web/controllers/product_html/show.html.heex` to show categories for a product.
 
 ### [Cross-context dependencies](https://hexdocs.pm/phoenix/contexts.html#cross-context-dependencies) 
+
+#### Create ShoppingCart Context
 In order to properly track products that have been added to a user's cart, we build the "carting products from the catalog" feature.
 
 - Generate `Cart` in  `ShoppingCart` context 
@@ -245,17 +247,42 @@ In order to properly track products that have been added to a user's cart, we bu
 
 - Run `mix ecto.migrate`.
 
-- Do cross-context data 
-  - Setup association for schemas which has dependencies for each other. In our case, `ShoppingCart` context have a data dependency on the `Catalog` context. 
-    - One solution is to use database joins to fetch the dependent data. (Our choice).
-    - Another one is to expose APIs on the `Catalog` context to allow us to fetch product data for use in the `ShoppingCart` system.
-  - Notice `has_many` vs `belong_to`
-    - `Cart` has many `CartItem`.
-    - `CartItem` belong to `Cart`, 
-    - `CartItem` belong to `Product`
+#### Do cross-context data 
+Resolve the dependency between resources
+- Setup association for schemas which has dependencies for each other. In our case, `ShoppingCart` context have a data dependency on the `Catalog` context. 
+  - One solution is to use database joins to fetch the dependent data. (Our choice).
+  - Another one is to expose APIs on the `Catalog` context to allow us to fetch product data for use in the `ShoppingCart` system.
+- Notice `has_many` vs `belong_to`
+  - `Cart` has many `CartItem`.
+  - `CartItem` belong to `Cart`, 
+  - `CartItem` belong to `Product`
+- Notice: we add `CartItem` instead of `Product` into our `Cart`.
+  - Between different contexts, they indicates the resource we use is different and should be treated differently. 
+  - For example, `Product` is used in `Catelog` but could not be used directly in `Cart`.
 
-- Adding Shopping Cart functions
-  See: [Adding Shopping Cart functions](https://hexdocs.pm/phoenix/contexts.html#adding-shopping-cart-functions)
+#### Adding Shopping Cart functions
+See: [Adding Shopping Cart functions](https://hexdocs.pm/phoenix/contexts.html#adding-shopping-cart-functions)
+- Ensure every user of our application is granted a cart if one does not yet exist.
+  - Make application support user session (as `Plug`)
+    - In connection, we need to assign `user_uuid`. We could get it from session. 
+    - If there is no `user_uuid`, we create new one, put it into session and assign it into connection. 
+    - The goal is to ensure there is a current user in the connection.
+  - Each connection has one user <==> one cart (as `Plug`).
+    - From connection's `current_uuid` (guaranteed from above user session `Plug`), get its corresponding cart. 
+    - If there is a one, assign it to connection. 
+    - Otherwise, create a new one for `current_uuid` and assign it to connection. 
+    - The goal is to ensure there is cart in the connection. 
+- Allow user add items to their cart, update item quantities, calculate cart totals.
+  - Modify router for `cart_item` and `cart`, and create corresponding controllers.
+  - `CartController` 
+  - `CartItemController`, for features related with `cart_item`:
+    - Add item to cart from a `product_id`.
+    - Remove item from cart from `product_id`
+    - The related resources include `Product`, `Cart`, `CartItem`.
+  - HTML part 
+    - "Add to cart" button on the product show page. 
+    
+
 
 
 # Other references
