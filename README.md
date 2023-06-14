@@ -370,6 +370,8 @@ resources "/orders", OrderController, only: [:create, :show]
 - Show a complete order
 - Add "complete order" button to cart page to allow completing an order.
 
+## [JSON and APIs](https://hexdocs.pm/phoenix/json_and_apis.html)
+
 # Other references
 
 ## About Ecto
