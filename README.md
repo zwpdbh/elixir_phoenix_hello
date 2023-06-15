@@ -382,15 +382,72 @@ In this part, we will build Web APIs to store our favorite links.
   mix phx.gen.json Urls Url urls link:string title:string
   ```
 
-# Other references
+  It generates
 
-## About Ecto
+  - controller -- `url_controller.ex`
+  - context -- `urls.ex`
+  - schema -- `url.ex`
+  - test files
+
+### Rendering JSON
+
+- In view, it is similar with how HTML is rendered except.
+  - For example, it is `UrlJSON` instead of `UrlHTML`.
+- Our JSON view converts our complex data into simple Elixir data-structures
+
+### [Action fallback](https://hexdocs.pm/phoenix/json_and_apis.html#action-fallback)
+
+- We could create a controller which dedicates to handle error message from connection. Then, in other controller, use it as action fallback
+- For example we have the following fallback controller
+
+  ```elixir
+  defmodule HelloWeb.MyFallbackController do
+    use Phoenix.Controller
+
+    def call(conn, {:error, :not_found}) do
+      conn
+      |> put_status(:not_found)
+      |> put_view(json: HelloWeb.ErrorJSON)
+      |> render(:"404")
+    end
+
+    def call(conn, {:error, :unauthorized}) do
+      conn
+      |> put_status(403)
+      |> put_view(json: HelloWeb.ErrorJSON)
+      |> render(:"403")
+    end
+  end
+  ```
+
+- We now could use it in other controller as
+
+  ```elixir
+  defmodule HelloWeb.MyController do
+    use Phoenix.Controller
+
+    action_fallback HelloWeb.MyFallbackController
+
+    def show(conn, %{"id" => id}, current_user) do
+      with {:ok, post} <- fetch_post(id),
+          :ok <- authorize_user(current_user, :view, post) do
+        render(conn, :show, post: post)
+      end
+    end
+  end
+  ```
+
+- See [FallbackController and ChangesetJSON](https://hexdocs.pm/phoenix/json_and_apis.html#fallbackcontroller-and-changesetjson) for more details.
+
+## Other references
+
+### About Ecto
 
 - Ecto, they are not tied to the database, and they can be used to map data from and to any source, which makes it a general and useful data structure for tracking field changes, perform validations, and generate error messages.
 - `%Ecto.Changeset{}` is a good choice to model the data changes between your contexts and your web layer - regardless if you are talking to an API or the database.
 - [Understanding Associations in Elixir's Ecto](https://blog.appsignal.com/2020/11/10/understanding-associations-in-elixir-ecto.html)
 
-# Troubleshooting
+## Troubleshooting
 
 - How to prevent vscode automatically add parenthese?
   This is especially annoying for some code, such as Plug related.

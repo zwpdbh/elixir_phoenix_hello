@@ -41,6 +41,11 @@ defmodule HelloWeb.Router do
     plug(:accepts, ["json"])
   end
 
+  scope "/api", HelloWeb do
+    pipe_through :api
+    resources "/urls", UrlController, except: [:new, :edit]
+  end
+
   scope "/", HelloWeb do
     pipe_through(:browser)
 
