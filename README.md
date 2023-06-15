@@ -372,6 +372,16 @@ resources "/orders", OrderController, only: [:create, :show]
 
 ## [JSON and APIs](https://hexdocs.pm/phoenix/json_and_apis.html)
 
+In this part, we will build Web APIs to store our favorite links.
+
+### The JSON API
+
+- Use `mix phx.gen.json` to generate scaffold our API infrastructure.
+
+  ```
+  mix phx.gen.json Urls Url urls link:string title:string
+  ```
+
 # Other references
 
 ## About Ecto
