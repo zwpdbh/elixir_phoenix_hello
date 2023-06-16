@@ -64,8 +64,63 @@ On the server, Phoenix will invoke `HelloWeb.UserSocket.connect/2`, passing your
 - Broadcast to topic
 - If your deployment environment does not support distributed Elixir or direct communication between servers, Phoenix also ships with a [Redis Adapter](https://hexdocs.pm/phoenix_pubsub_redis/Phoenix.PubSub.Redis.html) that uses Redis to exchange PubSub data.
 
-## Example
-
-A simple chat application
+## A simple chat application
 
 1. Generating a socket
+
+```sh
+mix phx.gen.socket User
+* creating lib/hello_web/channels/user_socket.ex
+* creating assets/js/user_socket.js
+
+Add the socket handler to your `lib/hello_web/endpoint.ex`, for example:
+
+    socket "/socket", HelloWeb.UserSocket,
+      websocket: true,
+      longpoll: false
+
+For the front-end integration, you need to import the `user_socket.js`
+in your `assets/js/app.js` file:
+
+    import "./user_socket.js"
+```
+
+- We generate two files which establish a websocket connection between client and server.
+- On client, we use JavaScript to connect to our server (assets/js/app.js).
+- On server
+
+  - We enable the transport which uses websocket (lib/hello_web/endpoint.ex).
+  - Define how a message get routed to a channel (lib/hello_web/channels/user_socket.ex).
+
+    ```elixir
+    defmodule HelloWeb.UserSocket do
+    use Phoenix.Socket
+
+    ## Channels
+    channel "room:*", HelloWeb.RoomChannel
+    ...
+    ```
+
+    - Now, whenever a client sends a message whose topic starts with "room:", it will be routed to our `RoomChannel`.
+    - It is very similar with how Http request is routed to a controller.
+
+2. Create Channel Module to handle message
+
+- Create `lib/hello_web/channels/room_channel.ex` to define `RoomChannel` module.
+- In `Channel`, we define how client join a given topic.
+
+## Summary
+
+`mix phx.gen.socket User` generates two coordiate files to set up a connection between client and server.
+
+On client side:
+
+- Create a socket connection to server.
+- With socket is connected: join different channels with topic.
+- Notice: When join a channel, client must specify a topic. Make sure it match the topics defined in the channel module from server (see below).
+
+On server side:
+
+- Define use websocket for connection.
+- Define a channel and create its corresponding channel module.
+- Define how client join a topic in the channel module.
