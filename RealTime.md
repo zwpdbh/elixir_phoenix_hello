@@ -109,7 +109,7 @@ in your `assets/js/app.js` file:
 - Create `lib/hello_web/channels/room_channel.ex` to define `RoomChannel` module.
 - In `Channel`, we define how client join a given topic.
 
-## Summary
+### Summary of Establishing Connection.
 
 `mix phx.gen.socket User` generates two coordiate files to set up a connection between client and server.
 
@@ -124,3 +124,7 @@ On server side:
 - Define use websocket for connection.
 - Define a channel and create its corresponding channel module.
 - Define how client join a topic in the channel module.
+
+So far, we should see "Joined successfully" in the browser's JavaScript console. Our client and server are now talking over a persistent connection.
+
+### Enabling Chat
