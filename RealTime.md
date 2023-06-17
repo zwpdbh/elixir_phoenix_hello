@@ -251,3 +251,9 @@ end
 ```
 
 Notice: the "user socket" is matched with the string value we used to sign the token in step 1.
+
+## Presence
+
+- Phoenix.Presence is a module that you can use to keep track of which users are on particular 'pages' of your app.
+- In other words, it help us to show online users in some context.
+- For example, we want to track all users are editing a particular file.
