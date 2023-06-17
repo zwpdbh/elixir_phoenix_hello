@@ -260,3 +260,4 @@ Notice: the "user socket" is matched with the string value we used to sign the t
 - See other references
   - [Can you hear me now? - Using Phoenix Presence](https://bendyworks.com/blog/can-you-hear-me-now-using-phoenix-presence)
   - [Using Phoenix Presence](https://whatdidilearn.info/2018/03/11/using-phoenix-presence.html)
+  - [Phoenix Presence with Phoenix LiveView](https://fullstackphoenix.com/tutorials/phoenix-presence-with-phoenix-liveview)
