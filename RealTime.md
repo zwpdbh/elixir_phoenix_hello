@@ -64,7 +64,7 @@ On the server, Phoenix will invoke `HelloWeb.UserSocket.connect/2`, passing your
 - Broadcast to topic
 - If your deployment environment does not support distributed Elixir or direct communication between servers, Phoenix also ships with a [Redis Adapter](https://hexdocs.pm/phoenix_pubsub_redis/Phoenix.PubSub.Redis.html) that uses Redis to exchange PubSub data.
 
-## A simple chat application
+## [A simple chat application](https://hexdocs.pm/phoenix/channels.html#tying-it-all-together)
 
 1. Generating a socket
 
@@ -121,10 +121,81 @@ On client side:
 
 On server side:
 
-- Define use websocket for connection.
-- Define a channel and create its corresponding channel module.
-- Define how client join a topic in the channel module.
+- Define use websocket for connection (`endpoint.ex`).
+- Define a channel and create its corresponding channel module (`user_socket.ex`).
+- Define how client join a topic in the channel module (`XyzChanel.ex`).
 
 So far, we should see "Joined successfully" in the browser's JavaScript console. Our client and server are now talking over a persistent connection.
 
-### Enabling Chat
+### Make it useful by enabling chat
+
+On client side (`user_socket.js`)
+
+- Define two UI elements with id and obtain their instance using JS code
+
+  ```js
+  let chatInput = document.querySelector("#chat-input");
+  let messagesContainer = document.querySelector("#messages");
+  ```
+
+- Push message to through channel with event
+
+  ```js
+  chatInput.addEventListener("keypress", (event) => {
+    if (event.key === "Enter") {
+      channel.push("new_msg", { body: chatInput.value });
+      chatInput.value = "";
+    }
+  });
+  ```
+
+- Receive and update messages so far
+
+  ```js
+  channel.on("new_msg", (payload) => {
+    let messageItem = document.createElement("p");
+    messageItem.innerText = `[${Date()}] ${payload.body}`;
+    messagesContainer.appendChild(messageItem);
+  });
+  ```
+
+- On server side (`room_channel.ex`)
+
+  ```elixir
+  def handle_in("new_msg", %{"body" => body}, socket) do
+    broadcast!(socket, "new_msg", %{body: body})
+    {:noreply, socket}
+  end
+  ```
+
+  - We simply match on `new_msg` event and grab the payload.
+  - And notify all other subscribers to `room:lobby` with `broadcast!/3`.
+  - Notice the map key is string:
+    - On client, the payload is `{ body: chatInput.value }`.
+    - On server, the payload is ` %{"body" => body}`.
+  - Each channel (including our own) subscriber can choose to intercept the event and have their handle_out/3 callback triggered
+
+    ```elixir
+    intercept ["new_msg"]
+
+    def handle_out("new_msg", msg, socket) do
+    push(
+      socket,
+      "new_msg",
+      Map.merge(
+        msg,
+        %{is_editable: false}
+      )
+    )
+
+    {:noreply, socket}
+    end
+    ```
+
+    - First, define what message could be intercept.
+    - Then, define the corresponding `handle_out/3`.
+    - Now, the client could receive message with appended extra info.
+
+At this point, fire up multiple browser tabs and you should see your messages being pushed and broadcasted to all windows!
+
+## [How to authenticate client](https://hexdocs.pm/phoenix/channels.html#using-token-authentication)
