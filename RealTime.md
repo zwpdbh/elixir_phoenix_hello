@@ -252,8 +252,11 @@ end
 
 Notice: the "user socket" is matched with the string value we used to sign the token in step 1.
 
-## Presence
+## [Presence](https://hexdocs.pm/phoenix/presence.html#content)
 
 - Phoenix.Presence is a module that you can use to keep track of which users are on particular 'pages' of your app.
 - In other words, it help us to show online users in some context.
 - For example, we want to track all users are editing a particular file.
+- See other references
+  - [Can you hear me now? - Using Phoenix Presence](https://bendyworks.com/blog/can-you-hear-me-now-using-phoenix-presence)
+  - [Using Phoenix Presence](https://whatdidilearn.info/2018/03/11/using-phoenix-presence.html)
