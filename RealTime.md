@@ -199,3 +199,55 @@ On client side (`user_socket.js`)
 At this point, fire up multiple browser tabs and you should see your messages being pushed and broadcasted to all windows!
 
 ## [How to authenticate client](https://hexdocs.pm/phoenix/channels.html#using-token-authentication)
+
+The general idea is
+
+- Associate every user with an assigned token in connection.
+- After that, verify the user token in connection.
+
+1. Assign a Token in the Connection
+
+- For a user in `conn.assigns`, we use `Phoenix.Token.sign` to sign a token from that user (using his/her id) and set that token in conn
+
+```elixir
+current_user = conn.assigns[:current_user]
+token = Phoenix.Token.sign(conn, "user socket", current_user.id)
+assign(conn, :user_token, token)
+```
+
+2. Pass the Token to the JavaScript
+
+- Get the assigned token from connection.
+- To make sure every place of our frontend has this, we do this in `web/templates/layout/app.html.heex`.
+
+```html
+<script>
+  window.userToken = "<%= assigns[:user_token] %>";
+</script>
+```
+
+3. Client connect to the socket in JavaScript with token
+
+We need to pass the assigned token during socket connection.
+
+```js
+let socket = new Socket("/socket", { params: { token: window.userToken } });
+```
+
+4. Server verify during socket connection
+
+We match and verify the user token in `lib/hello_web/channels/user_socket.ex`
+
+```elixir
+def connect(%{"token" => token}, socket, _connect_info) do
+  # max_age: 1209600 is equivalent to two weeks in seconds
+  case Phoenix.Token.verify(socket, "user socket", token, max_age: 1209600) do
+    {:ok, user_id} ->
+      {:ok, assign(socket, :current_user, user_id)}
+    {:error, reason} ->
+      :error
+  end
+end
+```
+
+Notice: the "user socket" is matched with the string value we used to sign the token in step 1.
