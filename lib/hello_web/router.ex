@@ -1,5 +1,6 @@
 defmodule HelloWeb.Router do
   use HelloWeb, :router
+  import Phoenix.LiveView.Router
 
   pipeline :browser do
     plug(:accepts, ["html"])
@@ -63,6 +64,9 @@ defmodule HelloWeb.Router do
     put("/cart", CartController, :update)
 
     resources "/orders", OrderController, only: [:create, :show]
+
+    # For liveview
+    live "/thermostat", ThermostatLive
   end
 
   # Other scopes may use custom stacks.
